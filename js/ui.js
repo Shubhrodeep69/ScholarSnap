@@ -1577,19 +1577,123 @@ function exportProfile() {
     return;
   }
 
-  const dataStr = JSON.stringify(UIState.userProfile, null, 2);
-  const dataUri =
-    "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF("p", "mm", "a4");
 
-  const exportFileDefaultName = `scholarship_profile_${new Date().toISOString().split("T")[0]}.json`;
+  const profile = UIState.userProfile;
 
-  const linkElement = document.createElement("a");
-  linkElement.setAttribute("href", dataUri);
-  linkElement.setAttribute("download", exportFileDefaultName);
-  linkElement.click();
+  // Theme Colors
+  const blue = [52, 152, 219];
+  const purple = [155, 89, 182];
+  const pink = [231, 76, 120];
+  const green = [46, 204, 113];
+  const orange = [243, 156, 18];
+  const light = [245, 247, 250];
+  const dark = [44, 62, 80];
 
-  showNotification("Profile exported successfully!", "success");
+  // ===== Gradient Header Effect =====
+  doc.setFillColor(...blue);
+  doc.rect(0, 0, 210, 18, "F");
+  doc.setFillColor(...purple);
+  doc.rect(0, 18, 210, 12, "F");
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(22);
+  doc.text("ScholarSnap", 20, 20);
+
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "normal");
+  doc.text(" Student Profile Report", 20, 27);
+
+  // Reset text color
+  doc.setTextColor(...dark);
+
+  // ===== Profile Card =====
+  doc.setFillColor(...light);
+  doc.roundedRect(15, 40, 180, 50, 5, 5, "F");
+
+  // Left color strip
+  doc.setFillColor(...pink);
+  doc.roundedRect(15, 40, 6, 50, 5, 5, "F");
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(15);
+  doc.text(profile.name || "N/A", 30, 55);
+
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "normal");
+  doc.text(`Gender: ${profile.gender || "N/A"}`, 30, 63);
+  doc.text(`DOB: ${profile.dob || "N/A"}`, 30, 70);
+
+  doc.text(`Phone: ${profile.phone || "N/A"}`, 120, 63);
+  doc.text(`Email: ${profile.email || "N/A"}`, 120, 70);
+
+  // ===== Section Helper =====
+  function colorfulSection(title, y, color) {
+    doc.setFillColor(...color);
+    doc.roundedRect(15, y - 7, 180, 10, 4, 4, "F");
+
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text(title, 20, y);
+
+    doc.setTextColor(...dark);
+  }
+
+  function field(label, value, x, y) {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text(label, x, y);
+
+    doc.setFont("helvetica", "normal");
+    doc.text(String(value || "N/A"), x, y + 6);
+  }
+
+  // ===== Address Section =====
+  colorfulSection("Address Information", 105, orange);
+
+  doc.setFillColor(...light);
+  doc.roundedRect(15, 110, 180, 45, 5, 5, "F");
+
+  field("Address", profile.address, 25, 123);
+  field("City", profile.city, 115, 123);
+  field("State", profile.state, 25, 140);
+  field("Pincode", profile.pincode, 115, 140);
+
+  // ===== Education Section =====
+  colorfulSection("Education Information", 170, green);
+
+  doc.setFillColor(...light);
+  doc.roundedRect(15, 175, 180, 35, 5, 5, "F");
+
+  field("Education Level", profile.education, 25, 190);
+  field("College / Institution", profile.college, 115, 190);
+
+
+
+  // ===== Footer =====
+  doc.setDrawColor(200);
+  doc.line(20, 265, 190, 265);
+
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "italic");
+  doc.text(
+    `Generated on: ${new Date().toLocaleString()} | ScholarSnap Digital Platform`,
+    105,
+    275,
+    { align: "center" }
+  );
+
+  // ===== Save =====
+  const fileName = `scholarsnap_profile_${new Date().toISOString().split("T")[0]}.pdf`;
+  doc.save(fileName);
+
+  showNotification(" PDF exported successfully!", "success");
 }
+
+
 
 /**
  * Clear profile data

@@ -441,4 +441,131 @@ document.addEventListener('DOMContentLoaded', function() {
 // Make app available globally
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = ScholarshipAIApp;
+
 }
+
+
+
+/**
+ * Loading Screen Management
+ */
+function showLoadingScreen() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+        loadingScreen.classList.remove('fade-out');
+    }
+}
+
+function hideLoadingScreen() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+        // Add fade-out class
+        loadingScreen.classList.add('fade-out');
+        
+        // Remove from DOM after animation completes
+        setTimeout(() => {
+            if (loadingScreen.parentNode) {
+                loadingScreen.style.display = 'none';
+            }
+        }, 500); // Match CSS transition duration
+    }
+}
+
+/**
+ * Initialize loading screen
+ */
+function initLoadingScreen() {
+    // Show loading screen immediately
+    showLoadingScreen();
+    
+    // Simulate loading process
+    let progress = 0;
+    const progressFill = document.querySelector('.progress-fill');
+    const loadingText = document.querySelector('.loading-text');
+    
+    const progressMessages = [
+        "Initializing scholarship database...",
+        "Loading AI matching algorithms...",
+        "Analyzing scholarship criteria...",
+        "Preparing personalized recommendations...",
+        "Almost ready..."
+    ];
+    
+    const progressInterval = setInterval(() => {
+        progress += 20;
+        
+        // Update progress text
+        if (progress <= 100) {
+            const messageIndex = Math.floor(progress / 20) - 1;
+            if (messageIndex >= 0 && messageIndex < progressMessages.length) {
+                if (loadingText) {
+                    loadingText.textContent = progressMessages[messageIndex];
+                }
+            }
+        }
+        
+        // Stop at 100%
+        if (progress >= 100) {
+            clearInterval(progressInterval);
+            
+            // Wait a moment, then hide loading screen
+            setTimeout(() => {
+                hideLoadingScreen();
+                
+                // Initialize main application
+                if (typeof initUI === 'function') {
+                    initUI();
+                }
+                
+                // Show welcome notification
+                setTimeout(() => {
+                    if (typeof showNotification === 'function') {
+                        showNotification('Welcome to Scholarship AI! Start by filling your profile.', 'success');
+                    }
+                }, 600);
+                
+            }, 7000); // Additional delay for smooth transition
+        }
+    }, 800); // Total: 5 * 400ms = 2 seconds loading time
+}
+
+// Initialize loading screen when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Start loading screen
+    setTimeout(initLoadingScreen, 100);
+    
+    // Optional: Hide loading screen if it takes too long (fail-safe)
+    setTimeout(() => {
+        hideLoadingScreen();
+        if (typeof initUI === 'function') {
+            initUI();
+        }
+    }, 5000); // Maximum 5 seconds loading time
+});
+
+// Optional: Show loading screen during form submission
+function showFormLoading() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+        loadingScreen.style.display = 'flex';
+        loadingScreen.classList.remove('fade-out');
+        
+        // Update loading text
+        const loadingText = document.querySelector('.loading-text');
+        if (loadingText) {
+            loadingText.textContent = "Finding matching scholarships...";
+        }
+    }
+}
+
+function hideFormLoading() {
+    setTimeout(hideLoadingScreen, 500);
+}
+
+// Export functions if needed
+window.loadingScreen = {
+    show: showLoadingScreen,
+    hide: hideLoadingScreen,
+    showFormLoading,
+    hideFormLoading
+};

@@ -1,12 +1,8 @@
 /**
- * AI MATCHING MODULE
- * Contains intelligent matching algorithms and explanation generation
- * Created by: Member 3 - AI Matching
+ * ENHANCED AI MATCHING FOR HACKATHON
+ * More sophisticated scoring with weights and explanations
  */
 
-/**
- * Student Profile Class
- */
 class StudentProfile {
     constructor(data) {
         this.educationLevel = data.educationLevel;
@@ -14,356 +10,255 @@ class StudentProfile {
         this.category = data.category;
         this.income = parseInt(data.income);
         this.region = data.region;
-        this.interests = data.interests ? 
-            data.interests.split(',').map(i => i.trim()) : [];
+        this.interests = data.interests ? data.interests.split(',').map(i => i.trim()) : [];
+        this.stream = data.stream || '';
     }
 
     validate() {
         const errors = [];
         
         if (!this.educationLevel) errors.push("Education level is required");
-        if (isNaN(this.marks) || this.marks < 0 || this.marks > 100) 
+        
+        // Fix marks validation
+        if (isNaN(this.marks) || this.marks < 0 || this.marks > 100) {
             errors.push("Marks must be between 0 and 100");
+        }
+        
         if (!this.category) errors.push("Category is required");
-        if (isNaN(this.income) || this.income < 0) 
+        
+        // Fix income validation
+        if (isNaN(this.income) || this.income < 0) {
             errors.push("Income must be a positive number");
+        }
+        
         if (!this.region) errors.push("Region is required");
         
+        console.log('Validation errors:', errors);
         return errors;
     }
 }
 
-/**
- * Main matching function
- * @param {StudentProfile} student - Student profile
- * @param {Array} scholarships - Scholarship database
- * @returns {Array} Sorted scholarships with match scores and explanations
- */
-function findMatchingScholarships(student, scholarships) {
-    if (!student || !scholarships) return [];
+// Enhanced matching with weights
+const MATCH_WEIGHTS = {
+    EDUCATION: 25,      // 25 points
+    MARKS: 30,          // 30 points  
+    INCOME: 25,         // 25 points
+    CATEGORY: 15,       // 15 points
+    REGION: 5           // 5 points
+};
+
+// Helper functions
+function matchEducation(studentEdu, requiredEdu) {
+    if (studentEdu === requiredEdu) {
+        return { points: 25, message: "Perfect education level match" };
+    }
     
-    const matches = scholarships.map(scholarship => {
-        const matchResult = calculateMatch(student, scholarship);
-        return {
-            ...scholarship,
-            matchScore: matchResult.score,
-            explanation: matchResult.explanation,
-            matchDetails: matchResult.details
-        };
-    });
+    // Partial matches (UG matches with PG, etc.)
+    const eduHierarchy = ["High School", "UG", "PG", "PhD"];
+    const studentIndex = eduHierarchy.indexOf(studentEdu);
+    const requiredIndex = eduHierarchy.indexOf(requiredEdu);
     
-    // Filter out scholarships with 0% match
-    const validMatches = matches.filter(match => match.matchScore > 0);
+    if (studentIndex >= requiredIndex) {
+        return { points: 20, message: "Education level meets requirement" };
+    } else if (studentIndex + 1 === requiredIndex) {
+        return { points: 10, message: "Education level slightly below requirement" };
+    }
     
-    // Sort by match score (descending)
-    validMatches.sort((a, b) => b.matchScore - a.matchScore);
-    
-    return validMatches;
+    return { points: 0, message: "Education level doesn't match" };
 }
 
-/**
- * Calculate match score between student and scholarship
- * @param {StudentProfile} student - Student profile
- * @param {Object} scholarship - Scholarship object
- * @returns {Object} Match result with score and explanation
- */
-function calculateMatch(student, scholarship) {
-    let score = 0;
-    let details = [];
-    let positiveFactors = [];
-    let negativeFactors = [];
+function matchMarks(studentMarks, requiredMarks) {
+    const difference = studentMarks - requiredMarks;
     
-    // 1. Education Level Match (20 points)
-    if (student.educationLevel === scholarship.degree) {
-        score += 20;
-        details.push({ factor: "Education Level", score: 20, matched: true });
-        positiveFactors.push("Your education level matches perfectly");
-    } else {
-        details.push({ factor: "Education Level", score: 0, matched: false });
-        negativeFactors.push("Education level doesn't match");
+    if (difference >= 10) {
+        return { 
+            points: 30, 
+            message: `Excellent marks (${studentMarks}% vs required ${requiredMarks}%)` 
+        };
+    } else if (difference >= 0) {
+        return { 
+            points: 25, 
+            message: `Marks meet requirement (${studentMarks}%)` 
+        };
+    } else if (difference >= -5) {
+        return { 
+            points: 15, 
+            message: `Marks slightly below (${studentMarks}% vs ${requiredMarks}%)` 
+        };
+    } else if (difference >= -10) {
+        return { 
+            points: 5, 
+            message: `Marks below requirement (${studentMarks}% vs ${requiredMarks}%)` 
+        };
     }
+    
+    return { 
+        points: 0, 
+        message: `Marks significantly below requirement` 
+    };
+}
+
+function matchIncome(studentIncome, incomeLimit) {
+    if (studentIncome <= incomeLimit) {
+        const percentage = (studentIncome / incomeLimit) * 100;
+        if (percentage < 50) {
+            return { 
+                points: 30, 
+                message: "Well within income limit" 
+            };
+        }
+        return { 
+            points: 25, 
+            message: "Within income limit" 
+        };
+    }
+    
+    const excessPercentage = ((studentIncome - incomeLimit) / incomeLimit) * 100;
+    if (excessPercentage <= 10) {
+        return { 
+            points: 15, 
+            message: "Slightly above income limit" 
+        };
+    } else if (excessPercentage <= 25) {
+        return { 
+            points: 5, 
+            message: "Above income limit" 
+        };
+    }
+    
+    return { 
+        points: 0, 
+        message: "Exceeds income limit significantly" 
+    };
+}
+
+function matchCategory(studentCategory, eligibleCategories) {
+    if (eligibleCategories.includes(studentCategory) || eligibleCategories.includes("All")) {
+        return { 
+            points: 15, 
+            message: `Your category (${studentCategory}) is eligible` 
+        };
+    }
+    
+    // Check for similar categories
+    if ((studentCategory === "OBC" && eligibleCategories.includes("General")) ||
+        (studentCategory === "General" && eligibleCategories.includes("OBC"))) {
+        return { 
+            points: 10, 
+            message: "Category partially matches" 
+        };
+    }
+    
+    return { 
+        points: 0, 
+        message: "Category not eligible" 
+    };
+}
+
+function matchRegion(studentRegion, scholarshipRegion) {
+    if (scholarshipRegion === "India" || studentRegion === scholarshipRegion) {
+        return { points: 5, message: "Region matches" };
+    }
+    
+    // Check if regions are compatible (e.g., North India matches with India)
+    if (scholarshipRegion === "India" || 
+        (studentRegion.includes("India") && scholarshipRegion.includes("India"))) {
+        return { points: 3, message: "Region compatible" };
+    }
+    
+    return { points: 0, message: "Region doesn't match" };
+}
+
+function generateAIExplanation(score, strengths, weaknesses) {
+    if (score >= 85) {
+        return `🎯 Excellent match! ${strengths[0]}. You have a very high chance of selection.`;
+    } else if (score >= 70) {
+        return `✅ Strong match. ${strengths[0]}. ${weaknesses.length > 0 ? `Note: ${weaknesses[0]}` : ''}`;
+    } else if (score >= 55) {
+        return `👍 Good potential. ${strengths.length > 0 ? strengths[0] : 'Meets basic criteria'}.`;
+    } else if (score >= 40) {
+        return `⚠️ Moderate match. ${weaknesses.length > 0 ? weaknesses[0] : 'Some criteria not fully met'}.`;
+    } else {
+        return `❌ Low match. Multiple criteria not met. Consider other options.`;
+    }
+}
+
+function calculateEnhancedMatch(student, scholarship) {
+    let score = 0;
+    let strengths = [];
+    let weaknesses = [];
+    
+    // 1. Education Match (25 points)
+    const eduScore = matchEducation(student.educationLevel, scholarship.degree);
+    score += eduScore.points;
+    if (eduScore.points > 20) strengths.push(eduScore.message);
+    else if (eduScore.points < 10) weaknesses.push(eduScore.message);
     
     // 2. Marks Match (30 points)
-    const marksMatch = calculateMarksMatch(student.marks, scholarship.minMarks);
-    score += marksMatch.score;
-    details.push({ factor: "Academic Marks", score: marksMatch.score, matched: marksMatch.score > 0 });
-    if (marksMatch.score > 0) {
-        positiveFactors.push(marksMatch.message);
-    } else {
-        negativeFactors.push(marksMatch.message);
-    }
+    const marksScore = matchMarks(student.marks, scholarship.minMarks);
+    score += marksScore.points;
+    if (marksScore.points > 20) strengths.push(marksScore.message);
+    else if (marksScore.points < 10) weaknesses.push(marksScore.message);
     
-    // 3. Income Match (30 points)
-    const incomeMatch = calculateIncomeMatch(student.income, scholarship.incomeLimit);
-    score += incomeMatch.score;
-    details.push({ factor: "Income", score: incomeMatch.score, matched: incomeMatch.score > 0 });
-    if (incomeMatch.score > 0) {
-        positiveFactors.push(incomeMatch.message);
-    } else {
-        negativeFactors.push(incomeMatch.message);
-    }
+    // 3. Income Match (25 points)
+    const incomeScore = matchIncome(student.income, scholarship.incomeLimit);
+    score += incomeScore.points;
+    if (incomeScore.points > 20) strengths.push(incomeScore.message);
+    else if (incomeScore.points < 10) weaknesses.push(incomeScore.message);
     
     // 4. Category Match (15 points)
-    const categoryMatch = calculateCategoryMatch(student.category, scholarship.category);
-    score += categoryMatch.score;
-    details.push({ factor: "Category", score: categoryMatch.score, matched: categoryMatch.score > 0 });
-    if (categoryMatch.score > 0) {
-        positiveFactors.push(categoryMatch.message);
-    } else {
-        negativeFactors.push(categoryMatch.message);
-    }
+    const categoryScore = matchCategory(student.category, scholarship.category);
+    score += categoryScore.points;
+    if (categoryScore.points > 10) strengths.push(categoryScore.message);
+    else if (categoryScore.points === 0) weaknesses.push(categoryScore.message);
     
     // 5. Region Match (5 points)
-    const regionMatch = calculateRegionMatch(student.region, scholarship.region);
-    score += regionMatch.score;
-    details.push({ factor: "Region", score: regionMatch.score, matched: regionMatch.score > 0 });
-    if (regionMatch.score > 0) {
-        positiveFactors.push(regionMatch.message);
-    }
+    const regionScore = matchRegion(student.region, scholarship.region);
+    score += regionScore.points;
     
     // Generate AI explanation
-    const explanation = generateExplanation(score, positiveFactors, negativeFactors);
+    const explanation = generateAIExplanation(score, strengths, weaknesses);
     
     return {
         score: Math.min(100, Math.round(score)),
-        explanation: explanation,
-        details: details
+        explanation,
+        strengths,
+        weaknesses
     };
 }
 
-/**
- * Calculate marks match with progressive scoring
- * @param {number} studentMarks - Student's marks
- * @param {number} requiredMarks - Required marks
- * @returns {Object} Match result
- */
-function calculateMarksMatch(studentMarks, requiredMarks) {
-    if (studentMarks >= requiredMarks) {
-        const difference = studentMarks - requiredMarks;
-        let bonus = 0;
-        
-        if (difference > 20) bonus = 5;
-        else if (difference > 10) bonus = 3;
-        else if (difference > 5) bonus = 1;
-        
-        return {
-            score: 30 + bonus,
-            message: `Your marks (${studentMarks}%) exceed the requirement (${requiredMarks}%)`
-        };
-    } else if (studentMarks >= requiredMarks - 5) {
-        return {
-            score: 15,
-            message: `Your marks (${studentMarks}%) are slightly below requirement (${requiredMarks}%)`
-        };
-    } else if (studentMarks >= requiredMarks - 10) {
-        return {
-            score: 5,
-            message: `Your marks (${studentMarks}%) are below requirement (${requiredMarks}%)`
-        };
-    } else {
-        return {
-            score: 0,
-            message: `Your marks (${studentMarks}%) don't meet the minimum requirement (${requiredMarks}%)`
-        };
-    }
-}
-
-/**
- * Calculate income match
- * @param {number} studentIncome - Student's family income
- * @param {number} incomeLimit - Scholarship income limit
- * @returns {Object} Match result
- */
-function calculateIncomeMatch(studentIncome, incomeLimit) {
-    if (studentIncome <= incomeLimit) {
-        const percentage = (studentIncome / incomeLimit) * 100;
-        let bonus = 0;
-        
-        if (percentage < 50) bonus = 5;
-        else if (percentage < 75) bonus = 3;
-        
-        return {
-            score: 30 + bonus,
-            message: `Your family income (₹${studentIncome.toLocaleString()}) is within the limit (₹${incomeLimit.toLocaleString()})`
-        };
-    } else if (studentIncome <= incomeLimit * 1.1) {
-        return {
-            score: 15,
-            message: `Your family income (₹${studentIncome.toLocaleString()}) is slightly above the limit (₹${incomeLimit.toLocaleString()})`
-        };
-    } else if (studentIncome <= incomeLimit * 1.25) {
-        return {
-            score: 5,
-            message: `Your family income (₹${studentIncome.toLocaleString()}) is above the limit (₹${incomeLimit.toLocaleString()})`
-        };
-    } else {
-        return {
-            score: 0,
-            message: `Your family income (₹${studentIncome.toLocaleString()}) exceeds the limit (₹${incomeLimit.toLocaleString()})`
-        };
-    }
-}
-
-/**
- * Calculate category match
- * @param {string} studentCategory - Student's category
- * @param {Array} eligibleCategories - Scholarship's eligible categories
- * @returns {Object} Match result
- */
-function calculateCategoryMatch(studentCategory, eligibleCategories) {
-    if (eligibleCategories.includes("All") || eligibleCategories.includes(studentCategory)) {
-        return {
-            score: 15,
-            message: `Your category (${studentCategory}) is eligible for this scholarship`
-        };
-    }
+function findMatchingScholarships(student, scholarships) {
+    console.log('Finding matches for:', student);
+    console.log('Total scholarships:', scholarships.length);
     
-    // Check for general category
-    if (studentCategory === "General" && eligibleCategories.includes("General")) {
+    const matches = scholarships.map(scholarship => {
+        const match = calculateEnhancedMatch(student, scholarship);
         return {
-            score: 15,
-            message: "General category is eligible"
+            ...scholarship,
+            matchScore: match.score,
+            explanation: match.explanation,
+            strengths: match.strengths,
+            weaknesses: match.weaknesses
         };
-    }
+    });
     
-    return {
-        score: 0,
-        message: `Your category (${studentCategory}) is not in the eligible categories`
-    };
-}
-
-/**
- * Calculate region match
- * @param {string} studentRegion - Student's region
- * @param {string} scholarshipRegion - Scholarship region
- * @returns {Object} Match result
- */
-function calculateRegionMatch(studentRegion, scholarshipRegion) {
-    if (scholarshipRegion === "India" || scholarshipRegion === "All India") {
-        return {
-            score: 5,
-            message: "Open to all regions in India"
-        };
-    }
+    // Show all matches with score > 0 for debugging
+    console.log('All matches with scores:', matches.map(m => ({
+        name: m.name,
+        score: m.matchScore
+    })));
     
-    if (studentRegion === scholarshipRegion) {
-        return {
-            score: 5,
-            message: `Your region (${studentRegion}) matches the scholarship region`
-        };
-    }
+    // Filter and sort - make threshold lower (from 30 to 20)
+    const filtered = matches
+        .filter(m => m.matchScore > 10) // Lowered threshold to 10
+        .sort((a, b) => b.matchScore - a.matchScore);
     
-    // Special cases
-    if (scholarshipRegion === "North India" && 
-        ["North India", "India"].includes(studentRegion)) {
-        return {
-            score: 5,
-            message: "Open to North Indian regions"
-        };
-    }
-    
-    return {
-        score: 0,
-        message: `Region requirement not met (requires: ${scholarshipRegion})`
-    };
-}
-
-/**
- * Generate AI-powered explanation
- * @param {number} score - Match score
- * @param {Array} positiveFactors - Positive match factors
- * @param {Array} negativeFactors - Negative match factors
- * @returns {string} Natural language explanation
- */
-function generateExplanation(score, positiveFactors, negativeFactors) {
-    if (score >= 90) {
-        return `Excellent match! ${positiveFactors[0]} and ${positiveFactors.length > 1 ? positiveFactors[1] : 'all criteria are met perfectly'}. You have a high chance of selection.`;
-    } else if (score >= 75) {
-        return `Strong match. ${positiveFactors[0]}. ${negativeFactors.length > 0 ? `However, ${negativeFactors[0].toLowerCase()}` : 'All key criteria are satisfied.'}`;
-    } else if (score >= 60) {
-        return `Good match. ${positiveFactors[0]}. ${negativeFactors.length > 0 ? `Note: ${negativeFactors[0].toLowerCase()}` : 'Consider applying with strong supporting documents.'}`;
-    } else if (score >= 40) {
-        return `Moderate match. ${positiveFactors.length > 0 ? positiveFactors[0] : 'Some criteria match'}. ${negativeFactors.length > 0 ? `Main limitation: ${negativeFactors[0].toLowerCase()}` : 'May require additional qualifications.'}`;
-    } else if (score >= 20) {
-        return `Low match. ${negativeFactors.length > 0 ? negativeFactors[0] : 'Multiple criteria not met'}. Consider improving qualifications or looking for other scholarships.`;
-    } else {
-        return `Very low match. ${negativeFactors.slice(0, 2).join(' and ').toLowerCase()}. Not recommended to apply.`;
-    }
-}
-
-/**
- * Get match breakdown for detailed view
- * @param {Object} matchDetails - Match details array
- * @returns {string} HTML for match breakdown
- */
-function getMatchBreakdownHTML(matchDetails) {
-    const totalPossible = 100;
-    const achieved = matchDetails.reduce((sum, detail) => sum + detail.score, 0);
-    
-    const breakdownHTML = matchDetails.map(detail => `
-        <div class="breakdown-item ${detail.matched ? 'matched' : 'not-matched'}">
-            <div class="breakdown-factor">${detail.factor}</div>
-            <div class="breakdown-score">${detail.score} points</div>
-            <div class="breakdown-status">
-                ${detail.matched ? '✅' : '❌'}
-            </div>
-        </div>
-    `).join('');
-    
-    return `
-        <div class="match-breakdown">
-            <h5><i class="fas fa-chart-pie"></i> Match Breakdown</h5>
-            <div class="breakdown-summary">
-                <div class="score-summary">
-                    <span class="achieved">${achieved}</span>
-                    <span class="separator">/</span>
-                    <span class="total">${totalPossible}</span>
-                    <span class="points">points</span>
-                </div>
-                <div class="breakdown-items">
-                    ${breakdownHTML}
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-/**
- * Filter scholarships based on additional criteria
- * @param {Array} matches - Matching scholarships
- * @param {Object} filters - Filter criteria
- * @returns {Array} Filtered scholarships
- */
-function filterScholarships(matches, filters) {
-    let filtered = [...matches];
-    
-    // Minimum match score filter
-    if (filters.minMatch) {
-        filtered = filtered.filter(match => match.matchScore >= filters.minMatch);
-    }
-    
-    // Sort order
-    if (filters.sortBy === "amount") {
-        filtered.sort((a, b) => b.amount - a.amount);
-    } else if (filters.sortBy === "deadline") {
-        filtered.sort((a, b) => {
-            const dateA = new Date(a.deadline);
-            const dateB = new Date(b.deadline);
-            return dateA - dateB;
-        });
-    } else {
-        // Default: sort by match score
-        filtered.sort((a, b) => b.matchScore - a.matchScore);
-    }
-    
+    console.log('Filtered matches:', filtered.length);
     return filtered;
 }
 
 /**
  * Get personalized recommendations based on interests
- * @param {StudentProfile} student - Student profile
- * @param {Array} matches - Matching scholarships
- * @returns {Array} Personalized recommendations
  */
 function getPersonalizedRecommendations(student, matches) {
     if (!student.interests || student.interests.length === 0) {
@@ -375,7 +270,7 @@ function getPersonalizedRecommendations(student, matches) {
         
         // Check if scholarship fields match student interests
         student.interests.forEach(interest => {
-            if (match.fields.some(field => 
+            if (match.fields && match.fields.some(field => 
                 field.toLowerCase().includes(interest.toLowerCase()) ||
                 interest.toLowerCase().includes(field.toLowerCase())
             )) {
@@ -401,12 +296,81 @@ function getPersonalizedRecommendations(student, matches) {
     return personalized;
 }
 
+/**
+ * Filter scholarships based on criteria
+ */
+function filterScholarships(matches, filters) {
+    if (!filters) return matches;
+    
+    let filtered = [...matches];
+    
+    // Minimum match score filter
+    if (filters.minMatch) {
+        filtered = filtered.filter(match => match.matchScore >= filters.minMatch);
+    }
+    
+    // Sort order
+    if (filters.sortBy === "amount") {
+        filtered.sort((a, b) => b.amount - a.amount);
+    } else if (filters.sortBy === "deadline") {
+        filtered.sort((a, b) => {
+            const dateA = new Date(a.deadline);
+            const dateB = new Date(b.deadline);
+            return dateA - dateB;
+        });
+    } else {
+        // Default: sort by match score
+        filtered.sort((a, b) => b.matchScore - a.matchScore);
+    }
+    
+    return filtered;
+}
+
+/**
+ * Get match breakdown HTML for detailed view
+ */
+function getMatchBreakdownHTML(matchDetails) {
+    if (!matchDetails || !Array.isArray(matchDetails)) {
+        return '';
+    }
+    
+    const totalPossible = 100;
+    const achieved = matchDetails.reduce((sum, detail) => sum + (detail.score || 0), 0);
+    
+    const breakdownHTML = matchDetails.map(detail => `
+        <div class="breakdown-item ${detail.matched ? 'matched' : 'not-matched'}">
+            <div class="breakdown-factor">${detail.factor || 'Unknown'}</div>
+            <div class="breakdown-score">${detail.score || 0} points</div>
+            <div class="breakdown-status">
+                ${(detail.score || 0) > 0 ? '✅' : '❌'}
+            </div>
+        </div>
+    `).join('');
+    
+    return `
+        <div class="match-breakdown">
+            <h5><i class="fas fa-chart-pie"></i> Match Breakdown</h5>
+            <div class="breakdown-summary">
+                <div class="score-summary">
+                    <span class="achieved">${achieved}</span>
+                    <span class="separator">/</span>
+                    <span class="total">${totalPossible}</span>
+                    <span class="points">points</span>
+                </div>
+                <div class="breakdown-items">
+                    ${breakdownHTML}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
 // Export functions for use in other modules
 window.aiMatching = {
     StudentProfile,
     findMatchingScholarships,
-    calculateMatch,
-    generateExplanation,
+    calculateEnhancedMatch,
+    generateAIExplanation,
     getMatchBreakdownHTML,
     filterScholarships,
     getPersonalizedRecommendations

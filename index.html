@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scholarship AI - Find Your Perfect Match</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Inside <head> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <div class="container">
         <!-- Header -->
@@ -17,6 +21,20 @@
             </div>
             <p class="tagline">Intelligent scholarship matching for students</p>
         </header>
+        <!-- Add this AFTER the header -->
+        <nav class="main-navigation">
+            <div class="nav-container">
+                <a href="#" class="nav-item active" data-tab="find">
+                    <i class="fas fa-search"></i> Find Scholarships
+                </a>
+                <a href="#" class="nav-item" data-tab="saved">
+                    <i class="far fa-bookmark"></i> My Saved (<span id="nav-saved-count">0</span>)
+                </a>
+                <a href="#" class="nav-item" data-tab="profile">
+                    <i class="fas fa-user"></i> My Profile
+                </a>
+            </div>
+        </nav>
 
         <div class="main-content">
             <!-- Left Side: Form -->
@@ -24,7 +42,7 @@
                 <div class="card">
                     <h2><i class="fas fa-user-edit"></i> Student Profile</h2>
                     <p class="subtitle">Fill in your details to find matching scholarships</p>
-                    
+
                     <form id="studentForm">
                         <!-- Education Level -->
                         <div class="form-group">
@@ -116,22 +134,7 @@
 
                     <!-- Filters -->
                     <div class="filters">
-                        <div class="filter-group">
-                            <label for="sortBy"><i class="fas fa-sort-amount-down"></i> Sort by:</label>
-                            <select id="sortBy">
-                                <option value="match">Best Match</option>
-                                <option value="amount">Highest Amount</option>
-                                <option value="deadline">Nearest Deadline</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label for="minMatch">Min. Match:</label>
-                            <input type="range" id="minMatch" min="0" max="100" value="50">
-                            <span id="matchValue">50%</span>
-                        </div>
-                        <button class="btn btn-small" id="applyFilters">
-                            <i class="fas fa-filter"></i> Apply
-                        </button>
+                        
                     </div>
 
                     <!-- Results Container -->
@@ -168,16 +171,75 @@
             <div class="card">
                 <h2><i class="far fa-bookmark"></i> Saved Scholarships</h2>
                 <div class="saved-container" id="savedContainer">
-                    <p class="empty-saved">No saved scholarships yet</p>
+                    <p class="empty-saved">Click My Saved section at top</p>
                 </div>
             </div>
         </section>
 
-        <!-- Footer -->
-        <footer class="footer">
-            <p>Scholarship AI © 2026</p>
-           
-        </footer>
+         <footer class="footer">
+    <div class="footer-content">
+        <div class="footer-brand">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h3>Scholarship<span class="ai-text">AI</span></h3>
+            </div>
+            <p class="tagline">Intelligent scholarship matching for students</p>
+        </div>
+        
+        <div class="footer-links">
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <a href="#" onclick="switchTab('find')" class="footer-link">
+                    <i class="fas fa-search"></i> Find Scholarships
+                </a>
+                <a href="#" onclick="switchTab('saved')" class="footer-link">
+                    <i class="fas fa-bookmark"></i> Saved Scholarships
+                </a>
+                <a href="#" onclick="switchTab('profile')" class="footer-link">
+                    <i class="fas fa-user"></i> My Profile
+                </a>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Support</h4>
+                <a href="#" class="footer-link">
+                    <i class="fas fa-question-circle"></i> Help Center
+                </a>
+                <a href="#" class="footer-link">
+                    <i class="fas fa-envelope"></i> Contact Us
+                </a>
+                <a href="#" class="footer-link">
+                    <i class="fas fa-shield-alt"></i> Privacy Policy
+                </a>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Connect</h4>
+                <div class="social-links">
+                    <a href="#" class="social-link">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="#" class="social-link">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p>© 2026 Scholarship AI. All rights reserved.</p>
+        <p class="team-credits">Created with ❤️ by Apollo V3 AI Team</p>
+    </div>
+</footer>
+
+
     </div>
 
     <!-- JavaScript Files -->
@@ -186,4 +248,5 @@
     <script src="js/ui.js"></script>
     <script src="js/main.js"></script>
 </body>
+
 </html>

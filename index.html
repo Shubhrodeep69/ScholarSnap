@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Scholarship Finder</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1><i class="fas fa-graduation-cap"></i> AI Scholarship Finder</h1>
+                <p class="tagline">EDUCATION • SOFTWARE</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Login / Register</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="hero">
+                <div class="hero-content">
+                    <h2>Find Your Perfect Scholarship with AI</h2>
+                    <p>Enter your details and let our AI engine recommend suitable scholarships, track deadlines, and assist with application preparation.</p>
+                    <div class="cta-buttons">
+                        <button class="btn btn-primary" id="loginAsStudentBtn">
+                            <i class="fas fa-user-graduate"></i> Student Portal
+                        </button>
+                        <button class="btn btn-secondary" id="loginAsAdminBtn">
+                            <i class="fas fa-user-shield"></i> Admin Portal
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="placeholder-image">
+                        <i class="fas fa-university"></i>
+                        <p>AI Scholarship Matching Platform</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="about" class="section">
+                <h2>About Our Platform</h2>
+                <p>Our AI Scholarship Finder helps students discover scholarships tailored to their profile. Simply enter details like academics, category, income, and interests. Our system will recommend suitable scholarships, highlight deadlines, and assist in preparing required documents.</p>
+            </section>
+
+            <section id="features" class="section">
+                <h2>Key Features</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-robot"></i>
+                        <h3>AI-Powered Matching</h3>
+                        <p>Our intelligent engine matches your profile with the most suitable scholarships.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-clock"></i>
+                        <h3>Deadline Tracking</h3>
+                        <p>Never miss an application deadline with our automated tracking system.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-file-alt"></i>
+                        <h3>Document Assistance</h3>
+                        <p>Get help preparing required documents and personal statements.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Application Tracking</h3>
+                        <p>Track the status of all your scholarship applications in one place.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="how-it-works" class="section">
+                <h2>How It Works</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h3>Create Profile</h3>
+                        <p>Students enter their academic details, category, income, and interests.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h3>AI Recommendations</h3>
+                        <p>Our AI engine analyzes your profile and recommends suitable scholarships.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h3>Apply & Track</h3>
+                        <p>Apply for scholarships and track your application status in real-time.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <h3>Admin Review</h3>
+                        <p>Scholarship providers review applications and make decisions.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>AI Scholarship Finder &copy; 2023 | Education • Software</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Contact Us</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            
+            <div class="auth-tabs">
+                <button class="tab-btn active" data-tab="login">Login</button>
+                <button class="tab-btn" data-tab="register">Register</button>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="loginTab" class="auth-form active">
+                <h2>Login to Your Account</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginType">I am a:</label>
+                        <select id="loginType" required>
+                            <option value="">Select user type</option>
+                            <option value="student">Student</option>
+                            <option value="admin">Scholarship Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginEmail">Email or Username:</label>
+                        <input type="text" id="loginEmail" placeholder="Enter your email or username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password:</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    <p class="demo-credentials">Demo: student1@university.edu / student123 or admin1@scholarship.com / admin123</p>
+                </form>
+            </div>
+            
+            <!-- Registration Form -->
+            <div id="registerTab" class="auth-form">
+                <h2>Create New Account</h2>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="registerType">I want to register as:</label>
+                        <select id="registerType" required>
+                            <option value="">Select user type</option>
+                            <option value="student">Student</option>
+                            <option value="admin">Scholarship Admin</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="registerName">Full Name *</label>
+                            <input type="text" id="registerName" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerUsername">Username *</label>
+                            <input type="text" id="registerUsername" placeholder="johndoe" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="registerEmail">Email Address *</label>
+                        <input type="email" id="registerEmail" placeholder="john@example.com" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="registerPassword">Password *</label>
+                            <input type="password" id="registerPassword" placeholder="Minimum 6 characters" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerConfirmPassword">Confirm Password *</label>
+                            <input type="password" id="registerConfirmPassword" placeholder="Confirm your password" required>
+                        </div>
+                    </div>
+                    
+                    <div id="studentFields" class="user-fields">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="studentGPA">Current GPA</label>
+                                <input type="number" id="studentGPA" step="0.1" min="0" max="4.0" placeholder="3.8">
+                            </div>
+                            <div class="form-group">
+                                <label for="studentMajor">Major/Field</label>
+                                <input type="text" id="studentMajor" placeholder="Computer Science">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="adminFields" class="user-fields" style="display: none;">
+                        <div class="form-group">
+                            <label for="adminOrganization">Organization *</label>
+                            <input type="text" id="adminOrganization" placeholder="Your organization name">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    
+    <style>
+        /* Additional styles for better modal display */
+        .placeholder-image {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .placeholder-image i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        .placeholder-image p {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .auth-form h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .user-fields {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-secondary {
+            background-color: #2c3e50;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #1a252f;
+        }
+        
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .tab-btn {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #7f8c8d;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab-btn.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+        }
+        
+        .auth-form {
+            display: none;
+        }
+        
+        .auth-form.active {
+            display: block;
+        }
+    </style>
+</body>
+</html>

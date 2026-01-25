@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - AI Scholarship Finder</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="admin-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1><i class="fas fa-graduation-cap"></i> AI Scholarship Finder</h1>
+                <p class="tagline">ADMIN PORTAL</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#" id="logoutBtn">Logout</a></li>
+                    <li class="admin-welcome">Welcome, Admin</li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <div class="admin-container">
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <div class="admin-profile">
+                        <div class="avatar">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <h3>Admin Name</h3>
+                        <p>Organization</p>
+                    </div>
+                    
+                    <nav class="sidebar-nav">
+                        <ul>
+                            <li><a href="#" class="active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                            <li><a href="#" data-section="add-scholarship"><i class="fas fa-plus-circle"></i> Add Scholarship</a></li>
+                            <li><a href="#" data-section="manage-scholarships"><i class="fas fa-list"></i> Manage Scholarships</a></li>
+                            <li><a href="#" data-section="applications"><i class="fas fa-file-alt"></i> Applications</a></li>
+                            <li><a href="#" data-section="statistics"><i class="fas fa-chart-bar"></i> Statistics</a></li>
+                        </ul>
+                    </nav>
+                </aside>
+
+                <!-- Main Content Area -->
+                <div class="main-content">
+                    <!-- Dashboard Section -->
+                    <section id="dashboard" class="content-section active">
+                        <div class="section-header">
+                            <h2>Admin Dashboard</h2>
+                            <p>Manage scholarships and review applications</p>
+                        </div>
+                        
+                        <div class="stats-cards">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background-color: #3498db;">
+                                    <i class="fas fa-award"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>Active Scholarships</h3>
+                                    <p class="stat-number" id="activeScholarships">0</p>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background-color: #2ecc71;">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>Total Applications</h3>
+                                    <p class="stat-number" id="totalApplications">0</p>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background-color: #e74c3c;">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>Pending Reviews</h3>
+                                    <p class="stat-number" id="pendingReviews">0</p>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background-color: #f39c12;">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>Awarded Scholarships</h3>
+                                    <p class="stat-number" id="awardedScholarships">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="recent-activity">
+                            <h3>Recent Applications</h3>
+                            <div class="activity-list">
+                                <!-- Activity items will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Add Scholarship Section -->
+                    <section id="add-scholarship" class="content-section">
+                        <div class="section-header">
+                            <h2>Add New Scholarship</h2>
+                            <p>Create a new scholarship opportunity for students</p>
+                        </div>
+                        
+                        <form id="scholarshipForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="scholarshipName">Scholarship Name *</label>
+                                    <input type="text" id="scholarshipName" required placeholder="e.g., Excellence in Computer Science">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="provider">Provider/Organization *</label>
+                                    <input type="text" id="provider" required readonly>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="amount">Scholarship Amount *</label>
+                                    <input type="text" id="amount" required placeholder="e.g., $5,000">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="deadline">Application Deadline *</label>
+                                    <input type="date" id="deadline" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="description">Description *</label>
+                                <textarea id="description" rows="4" required placeholder="Describe the scholarship, eligibility criteria, and benefits..."></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="eligibility">Eligibility Criteria *</label>
+                                <textarea id="eligibility" rows="3" required placeholder="List the eligibility requirements..."></textarea>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="category">Category *</label>
+                                    <select id="category" required>
+                                        <option value="">Select category</option>
+                                        <option value="academic">Academic Excellence</option>
+                                        <option value="stem">STEM Fields</option>
+                                        <option value="arts">Arts & Humanities</option>
+                                        <option value="sports">Sports</option>
+                                        <option value="need-based">Need-Based</option>
+                                        <option value="minority">Minority Groups</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="maxApplicants">Maximum Applicants</label>
+                                    <input type="number" id="maxApplicants" placeholder="Leave empty for unlimited">
+                                </div>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Create Scholarship</button>
+                                <button type="reset" class="btn btn-secondary">Reset Form</button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <!-- Manage Scholarships Section -->
+                    <section id="manage-scholarships" class="content-section">
+                        <div class="section-header">
+                            <h2>Manage Scholarships</h2>
+                            <p>View, edit, or delete your scholarship listings</p>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table id="scholarshipsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Scholarship Name</th>
+                                        <th>Amount</th>
+                                        <th>Deadline</th>
+                                        <th>Applications</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Scholarship rows will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- Applications Section -->
+                    <section id="applications" class="content-section">
+                        <div class="section-header">
+                            <h2>Applications Review</h2>
+                            <p>Review and make decisions on student applications</p>
+                        </div>
+                        
+                        <div class="applications-container">
+                            <!-- Application cards will be populated by JavaScript -->
+                        </div>
+                    </section>
+
+                    <!-- Statistics Section -->
+                    <section id="statistics" class="content-section">
+                        <div class="section-header">
+                            <h2>Statistics & Reports</h2>
+                            <p>View analytics about your scholarships and applications</p>
+                        </div>
+                        
+                        <div class="charts-container">
+                            <div class="chart-card">
+                                <h3>Applications by Status</h3>
+                                <div class="chart-placeholder">
+                                    <canvas id="statusChart"></canvas>
+                                </div>
+                            </div>
+                            
+                            <div class="chart-card">
+                                <h3>Scholarship Popularity</h3>
+                                <div class="chart-placeholder">
+                                    <canvas id="popularityChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>AI Scholarship Finder Admin Portal &copy; <span id="currentYear"></span></p>
+        </footer>
+    </div>
+
+    <!-- Confirmation Modal for Actions -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Confirm Action</h3>
+            <p id="modalMessage">Are you sure you want to perform this action?</p>
+            <div class="modal-actions">
+                <button id="confirmAction" class="btn btn-primary">Confirm</button>
+                <button id="cancelAction" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../script.js"></script>
+    <script src="portal-guard.js"></script>
+    <script src="admin-script.js"></script>
+    
+    <script>
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>

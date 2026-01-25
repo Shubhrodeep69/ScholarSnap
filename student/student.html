@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal - AI Scholarship Finder</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="student-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1><i class="fas fa-graduation-cap"></i> AI Scholarship Finder</h1>
+                <p class="tagline">STUDENT PORTAL</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="#" id="logoutBtn">Logout</a></li>
+                    <li class="student-welcome">Welcome, Student</li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <div class="student-container">
+                <!-- Student Profile Sidebar -->
+                <aside class="student-sidebar">
+                    <div class="student-profile">
+                        <div class="avatar">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <h3>Student Name</h3>
+                        <p>Major</p>
+                        <div class="profile-stats">
+                            <div class="stat">
+                                <h4>GPA</h4>
+                                <p id="studentGPA">0.0</p>
+                            </div>
+                            <div class="stat">
+                                <h4>Applied</h4>
+                                <p id="studentApplied">0</p>
+                            </div>
+                            <div class="stat">
+                                <h4>Awarded</h4>
+                                <p id="studentAwarded">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-actions">
+                        <button class="btn btn-primary" id="updateProfileBtn"><i class="fas fa-edit"></i> Update Profile</button>
+                        <button class="btn btn-secondary" id="aiRecommendationsBtn"><i class="fas fa-robot"></i> AI Recommendations</button>
+                    </div>
+                    
+                    <div class="deadline-reminder">
+                        <h4><i class="fas fa-clock"></i> Upcoming Deadlines</h4>
+                        <div class="deadline-list">
+                            <!-- Deadlines will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Main Content Area -->
+                <div class="main-content">
+                    <!-- Dashboard Section -->
+                    <section id="dashboard" class="content-section active">
+                        <div class="section-header">
+                            <h2>Your Scholarship Dashboard</h2>
+                            <p>Track your applications and discover new opportunities</p>
+                        </div>
+                        
+                        <div class="dashboard-cards">
+                            <div class="dashboard-card">
+                                <h3><i class="fas fa-search"></i> Find Scholarships</h3>
+                                <p>Browse available scholarships and apply with one click.</p>
+                                <button class="btn btn-primary" id="browseScholarshipsBtn">Browse Now</button>
+                            </div>
+                            
+                            <div class="dashboard-card">
+                                <h3><i class="fas fa-file-alt"></i> My Applications</h3>
+                                <p>Track the status of your scholarship applications.</p>
+                                <button class="btn btn-secondary" id="viewApplicationsBtn">View Applications</button>
+                            </div>
+                            
+                            <div class="dashboard-card">
+                                <h3><i class="fas fa-robot"></i> AI Recommendations</h3>
+                                <p>Get personalized scholarship recommendations based on your profile.</p>
+                                <button class="btn btn-primary" id="getRecommendationsBtn">Get Recommendations</button>
+                            </div>
+                        </div>
+                        
+                        <div class="quick-stats">
+                            <h3>Your Application Status</h3>
+                            <div class="stats-bars">
+                                <div class="stat-bar">
+                                    <div class="stat-label">Pending</div>
+                                    <div class="stat-bar-container">
+                                        <div class="stat-bar-fill" style="width: 0%; background-color: #f39c12;"></div>
+                                    </div>
+                                    <div class="stat-value">0</div>
+                                </div>
+                                
+                                <div class="stat-bar">
+                                    <div class="stat-label">Approved</div>
+                                    <div class="stat-bar-container">
+                                        <div class="stat-bar-fill" style="width: 0%; background-color: #27ae60;"></div>
+                                    </div>
+                                    <div class="stat-value">0</div>
+                                </div>
+                                
+                                <div class="stat-bar">
+                                    <div class="stat-label">Rejected</div>
+                                    <div class="stat-bar-container">
+                                        <div class="stat-bar-fill" style="width: 0%; background-color: #e74c3c;"></div>
+                                    </div>
+                                    <div class="stat-value">0</div>
+                                </div>
+                                
+                                <div class="stat-bar">
+                                    <div class="stat-label">Drafts</div>
+                                    <div class="stat-bar-container">
+                                        <div class="stat-bar-fill" style="width: 0%; background-color: #3498db;"></div>
+                                    </div>
+                                    <div class="stat-value">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Browse Scholarships Section -->
+                    <section id="browse-scholarships" class="content-section">
+                        <div class="section-header">
+                            <h2>Available Scholarships</h2>
+                            <p>Browse and apply for scholarships that match your profile</p>
+                        </div>
+                        
+                        <div class="filters">
+                            <div class="filter-group">
+                                <label for="categoryFilter">Filter by Category:</label>
+                                <select id="categoryFilter">
+                                    <option value="all">All Categories</option>
+                                    <option value="academic">Academic Excellence</option>
+                                    <option value="stem">STEM Fields</option>
+                                    <option value="arts">Arts & Humanities</option>
+                                    <option value="sports">Sports</option>
+                                    <option value="need-based">Need-Based</option>
+                                    <option value="minority">Minority Groups</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="sortBy">Sort By:</label>
+                                <select id="sortBy">
+                                    <option value="deadline">Deadline (Soonest)</option>
+                                    <option value="amount">Amount (Highest)</option>
+                                    <option value="newest">Newest First</option>
+                                </select>
+                            </div>
+                            
+                            <button class="btn btn-secondary" id="applyFiltersBtn">Apply Filters</button>
+                        </div>
+                        
+                        <div class="scholarships-list">
+                            <!-- Scholarships will be populated by JavaScript -->
+                        </div>
+                    </section>
+
+                    <!-- My Applications Section -->
+                    <section id="my-applications" class="content-section">
+                        <div class="section-header">
+                            <h2>My Applications</h2>
+                            <p>Track the status of your scholarship applications</p>
+                        </div>
+                        
+                        <div class="applications-list">
+                            <!-- Applications will be populated by JavaScript -->
+                        </div>
+                    </section>
+
+                    <!-- AI Recommendations Section -->
+                    <section id="ai-recommendations" class="content-section">
+                        <div class="section-header">
+                            <h2>AI Recommendations</h2>
+                            <p>Personalized scholarship recommendations based on your profile</p>
+                        </div>
+                        
+                        <div class="recommendations-container">
+                            <div class="profile-summary">
+                                <h3>Your Profile Summary</h3>
+                                <div class="profile-details">
+                                    <div class="detail">
+                                        <span class="label">Major:</span>
+                                        <span class="value" id="profileMajor">Undeclared</span>
+                                    </div>
+                                    <div class="detail">
+                                        <span class="label">GPA:</span>
+                                        <span class="value" id="profileGPA">0.0</span>
+                                    </div>
+                                    <div class="detail">
+                                        <span class="label">Category:</span>
+                                        <span class="value" id="profileCategory">General</span>
+                                    </div>
+                                    <div class="detail">
+                                        <span class="label">Income Level:</span>
+                                        <span class="value" id="profileIncome">Middle Class</span>
+                                    </div>
+                                    <div class="detail">
+                                        <span class="label">Interests:</span>
+                                        <span class="value" id="profileInterests">General</span>
+                                    </div>
+                                </div>
+                                <button class="btn btn-secondary" id="updateProfileForAI">Update Profile</button>
+                            </div>
+                            
+                            <div class="recommendations-list">
+                                <h3>Recommended Scholarships</h3>
+                                <div class="recommendations">
+                                    <!-- Recommendations will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Application Form Section -->
+                    <section id="application-form" class="content-section">
+                        <div class="section-header">
+                            <h2 id="applicationFormTitle">Apply for Scholarship</h2>
+                            <p id="applicationFormSubtitle">Complete your application</p>
+                        </div>
+                        
+                        <form id="studentApplicationForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="applicantName">Full Name *</label>
+                                    <input type="text" id="applicantName" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="applicantEmail">Email Address *</label>
+                                    <input type="email" id="applicantEmail" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="applicantGPA">Current GPA *</label>
+                                    <input type="number" id="applicantGPA" step="0.01" min="0" max="4.0" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="applicantMajor">Major/Field of Study *</label>
+                                    <input type="text" id="applicantMajor" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="applicantEssay">Personal Essay *</label>
+                                <p class="form-help">Explain why you deserve this scholarship (500-1000 words).</p>
+                                <textarea id="applicantEssay" rows="8" required placeholder="Describe your academic achievements, career goals, and how this scholarship will help you..."></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Additional Documents</label>
+                                <div class="documents-upload">
+                                    <div class="document-item">
+                                        <span>Transcript (PDF)</span>
+                                        <button type="button" class="btn-upload">Upload</button>
+                                    </div>
+                                    <div class="document-item">
+                                        <span>Recommendation Letter (PDF)</span>
+                                        <button type="button" class="btn-upload">Upload</button>
+                                    </div>
+                                    <div class="document-item">
+                                        <span>Resume/CV (PDF)</span>
+                                        <button type="button" class="btn-upload">Upload</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <input type="hidden" id="scholarshipId">
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Submit Application</button>
+                                <button type="button" class="btn btn-secondary" id="saveDraftBtn">Save as Draft</button>
+                                <button type="button" class="btn btn-secondary" id="cancelApplicationBtn">Cancel</button>
+                            </div>
+                        </form>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>AI Scholarship Finder Student Portal &copy; <span id="currentYear"></span></p>
+        </footer>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Confirm Action</h3>
+            <p id="modalMessage">Are you sure you want to perform this action?</p>
+            <div class="modal-actions">
+                <button id="confirmAction" class="btn btn-primary">Confirm</button>
+                <button id="cancelAction" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main scripts -->
+    <script src="../script.js"></script>
+    <script src="portal-guard.js"></script>
+    <script src="student-script.js"></script>
+    
+    <script>
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
